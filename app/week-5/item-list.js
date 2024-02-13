@@ -25,11 +25,11 @@ export default function ItemList() {
 
   return (
     <main>
-      
+
       <div className="flex justify-center space-x-4">
         <button className={"p-2 m-2 rounded-lg " + (sortBy === 'name' ? 'bg-red-500' : 'bg-orange-500')} onClick={() => setSortBy('name')}>Name</button>
         <button className={"p-2 m-2 rounded-lg " + (sortBy === 'category' ? 'bg-red-500' : 'bg-orange-500')} onClick={() => setSortBy('category')}>Category</button>
-        <button className={"p-2 m-2 rounded-lg " + (sortBy === 'Group By Category' ? 'bg-red-500' : 'bg-orange-500')} onClick={() => setSortBy('Group By Category')}>Group By Category</button>
+        <button className={"p-2 m-2 rounded-lg " + (sortBy === 'Grouped Category' ? 'bg-red-500' : 'bg-orange-500')} onClick={() => setSortBy('Grouped Category')}>Grouped Category</button>
       </div>
       
         
