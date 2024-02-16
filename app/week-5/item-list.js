@@ -2,81 +2,87 @@
 
 import Item from "./item.js";
 import { useState } from "react";
-import items from "./items.json";
+import itemsData from "./items.json";
 
-export default function ItemList() {
+export default function ItemList({ items }) {
   const [sortBy, setSortBy] = useState("name");
 
-  if (sortBy === "name") {
-    items.sort((a, b) => a.name.localeCompare(b.name));
-  }
-  if (sortBy === "category") {
-    items.sort((a, b) => a.category.localeCompare(b.category));
-  }
+  const sortItems = () => {
+    if (sortBy === "name") {
+      return itemsData.slice().sort((a, b) => a.name.localeCompare(b.name));
+    }
+    if (sortBy === "category") {
+      return itemsData.slice().sort((a, b) => a.category.localeCompare(b.category));
+    }
+    if (sortBy === "groupCategory") {
+      const groupedItems = itemsData.reduce((grouping, item) => {
+        if (!grouping[item.category]) {
+          grouping[item.category] = [];
+        }
+        grouping[item.category].push(item);
+        return grouping;
+      }, {});
 
-  let categories = items.map((item) => item.category);
-  categories.sort();
-  let uniqueCategories = [...new Set(categories)];
-  categories = uniqueCategories;
+      const sortedCategories = Object.keys(groupedItems).sort();
+
+      return sortedCategories.map((category) => ({
+        category,
+        items: groupedItems[category].sort((a, b) => a.name.localeCompare(b.name))
+      }));
+    }
+    // Return itemsData by default
+    return itemsData;
+  };
 
   return (
-    <main>
-      <div className="flex justify-center space-x-4">
+    <div >
+      <p class="flex items-center">
         <button
-          className={
-            "p-2 m-2 rounded-lg " +
-            (sortBy === "name" ? "bg-red-500" : "bg-orange-500")
-          }
           onClick={() => setSortBy("name")}
+          className={`bg-${sortBy === "name" ? "blue-500" : "blue-900"} p-1 m-2 w-20 h-20 text-black rounded-md`}
         >
           Name
         </button>
         <button
-          className={
-            "p-2 m-2 rounded-lg " +
-            (sortBy === "category" ? "bg-red-500" : "bg-orange-500")
-          }
-          onClick={() => setSortBy("category")}
+           onClick={() => setSortBy("category")}
+           className={`bg-${sortBy === "category" ? "blue-500" : "blue-900"} p-1 m-2 w-20 h-20 text-black rounded-md`}
         >
           Category
         </button>
         <button
-          className={
-            "p-2 m-2 rounded-lg " +
-            (sortBy === "Grouped Category" ? "bg-red-500" : "bg-orange-500")
-          }
-          onClick={() => setSortBy("Grouped Category")}
+           onClick={() => setSortBy("groupCategory")}
+           className={`bg-${sortBy === "groupCategory" ? "blue-500" : "blue-900"} p-1 m-2 w-20 h-20 text-black rounded-md`}
         >
-          Grouped Category
+          Group Category
         </button>
-      </div>
-
-      {sortBy != "Groped Category"
-        ? items.map((item) => (
+      </p>
+      <ul>
+      {sortBy === "groupCategory" ? sortItems().map((group) => (
+          <div key={group.category}>
+            <h2 className="text-xl capitalize mt-2">{group.category}</h2>
+            <ul>
+              {group.items.map((item) => (
+                <li key={item.id}>
+                  <Item
+                    name={item.name}
+                    quantity={item.quantity}
+                    category={item.category}
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+        )) : sortItems().map((item) => (
+          <li key={item.id}>
             <Item
-              key={item.id}
               name={item.name}
               quantity={item.quantity}
               category={item.category}
             />
-          ))
-        : categories.map((category, index) => (
-            <ul key={index}>
-              <li className="text-xl capitalize">{category}</li>
-              <li>
-                {items
-                  .filter((item) => item.category === category)
-                  .map((item) => (
-                    <Item
-                      key={item.id}
-                      name={item.name}
-                      quantity={item.quantity}
-                      category={item.category}
-                    />
-                  ))}
-              </li>
-            </ul>
-          ))}
-    </main>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
-}
+};
+
