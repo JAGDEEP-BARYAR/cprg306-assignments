@@ -1,49 +1,82 @@
-"use client"
+"use client";
+
 import { useState } from "react";
-    
-    export function NewItem({ onAddItem}) {
-        const [name, setName] = useState("");
-        const [quantity, setQuantity] = useState(1);
-        const [category, setCategory] = useState("produce");
-        function handleSubmit(event) {
-            event.preventDefault();
-            const categoryObject = categories.find(cat => cat.value === category);
-            const item = { name, quantity, category: categoryObject.label };
-            setItems([...(items || []), item]);
-            console.log("new item", item);
-            alert(`Added ${quantity} ${name} from ${categoryObject.label}`);
-            setName("");
-            setQuantity(1);
-            setCategory("produce");
-        }
-    return (
-        <div className="flex items-center justify-center h-screen">
-            <form onSubmit={handleSubmit} className="flex flex-col items-center">
-                <div className="flex flex-col items-center mb-4">
-                    <label className="text-white mb-2">Item Name</label>
-                    <input className="custom-input" type="text" value={name} onChange={(e) => setName(e.target.value)} required />
-                </div>
-                <div className="flex flex-col items-center mb-4">
-                    <label className="text-white mb-2">Quantity</label>
-                    <input className="custom-input" type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} min="1" max="99" required />
-                    <select className="custom-select mt-2" value={category} onChange={(e) => setCategory(e.target.value)}>
-                        <option value="Produce">Produce</option>
-                        <option value="Dairy">Dairy</option>
-                        <option value="Bakery">Bakery</option>
-                        <option value="Meat">Meat</option>
-                        <option value="Frozen Foods">Frozen Foods</option>
-                        <option value="Canned Goods">Canned Goods</option>
-                        <option value="Dry Goods">Dry Goods</option>
-                        <option value="Beverages">Beverages</option>
-                        <option value="Snacks">Snacks</option>
-                        <option value="Household">Household</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-                <div className="flex flex-row items-center justify-center">
-                    <button className="custom-button bg-blue-500 text-white px-4 py-2 rounded-md mt-4">+</button>
-                </div>
-            </form>
+
+export default function NewItem({ onAddItem }) {
+  const [name, setName] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const [category, setCategory] = useState("produce");
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    const item = { id: generateRandomId(), name, quantity, category };
+    onAddItem(item);
+    setName("");
+    setQuantity(1);
+    setCategory("produce");
+  }
+
+  function generateRandomId() {
+    return Math.random().toString(36);
+  }
+
+  return (
+    <div className="mb-2">
+      <form
+        className="p-2 m-4 bg-slate-500 text-black max-w-sm w-full"
+        onSubmit={handleSubmit}
+      >
+        <div className="mb-2">
+          <input
+            type="text"
+            id="name"
+            value={name}
+            placeholder="Item Name"
+            onChange={(event) => setName(event.target.value)}
+            required
+            className="w-full mt-1 border-2 border-gray-300 p-2 rounded-lg font-sans"
+          />
         </div>
-    );
+        <div className="flex justify-between">
+          <input
+            type="number"
+            id="quantity"
+            value={quantity}
+            onChange={(event) => setQuantity(Number(event.target.value))}
+            min="1"
+            max="99"
+            required
+            className="w-20 ml-1 border-2 border-gray-300 p-2 rounded-lg font-sans"
+          />
+          <select
+            id="category"
+            value={category}
+            onChange={(event) => setCategory(event.target.value)}
+            className="ml-1 border-2 borer-gray-300 p-2 rounded-lg font-sans"
+          >
+            <option value disabled>
+              Category
+            </option>
+            <option value="produce">Produce</option>
+            <option value="dairy">Dairy</option>
+            <option value="bakery">Bakery</option>
+            <option value="meat">Meat</option>
+            <option value="frozen">Frozen Foods</option>
+            <option value="canned">Canned Goods</option>
+            <option value="dry">Dry Goods</option>
+            <option value="beverages">Beverages</option>
+            <option value="snacks">Snacks</option>
+            <option value="household">Household</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <button
+          type="submit"
+          className="w-full mt-4 py-2 px-4 bg-blue-800 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+        >
+          +
+        </button>
+      </form>
+    </div>
+  );
 }
